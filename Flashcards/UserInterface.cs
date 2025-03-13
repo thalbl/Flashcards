@@ -133,6 +133,7 @@ namespace Flashcards
                         StacksController.GetStacks();
                         break;
                     default:
+                        Console.WriteLine("\nInvalid command.");
                         break;
                 }
             }
