@@ -104,5 +104,44 @@ namespace Flashcards {
             Console.WriteLine("\n\nYour flashcard was created!\n");
             FlashcardsController.CreateFlashcard(stackId, stack.Name);
         }
+
+        internal static void DeleteStack(int idToDelete) {
+            SqlConnection connection = new(connectionString);
+
+            using(connection) {
+                connection.Open();
+                var tableCmd = connection.CreateCommand();
+                tableCmd.CommandText = $@"
+                        DELETE FROM stack WHERE Id = ('{idToDelete}')";
+                tableCmd.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+
+        internal static void UpdateStackName(int idToUpdate) {
+            SqlConnection connection = new(connectionString);
+            string newName = UserInterface.GetStringInput("\n\nEnter with the new name:");
+
+            using (connection) {
+                connection.Open();
+                var tableCmd = connection.CreateCommand();
+                tableCmd.CommandText = $@"
+                        UPDATE stack 
+                        SET name = ('{newName}')
+                        WHERE Id = ('{idToUpdate}')";
+                tableCmd.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+
+        private static int GetStackId() {
+            SqlConnection connection = new(connectionString);
+
+            connection.Open();
+            SqlCommand command = new("SELECT IDENT_CURRENT('stack')", connection);
+            int id = Convert.ToInt32(command.ExecuteScalar());
+            connection.Close();
+            return id;
+        }
     }
 }
